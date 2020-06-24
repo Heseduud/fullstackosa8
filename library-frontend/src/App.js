@@ -6,13 +6,21 @@ import NewBook from './components/NewBook'
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [token, setToken] = useState(null)
 
+  if (!token) {
+    return (
+
+    )
+  }
+ 
   return (
     <div>
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
+        <button onClick={() => setPage('login')}></button>
       </div>
 
       <Authors
@@ -25,6 +33,11 @@ const App = () => {
 
       <NewBook
         show={page === 'add'}
+      />
+
+      <LoginForm
+        setToken={setToken}
+        show={page === 'login'}
       />
 
     </div>

@@ -8,7 +8,7 @@ const Author = require('./models/author')
 const User = require('./models/user')
 
 mongoose.set('useFindAndModify', false)
-const MONGODB_URI = 'mongodb+srv://heseduud:7AzFBopV3vEE6lIl@cluster0-ifmbn.mongodb.net/gql?retryWrites=true&w=majority'
+const MONGODB_URI = 'mongodb+srv://heseduud:PSSWRD@cluster0-ifmbn.mongodb.net/gql?retryWrites=true&w=majority'
 const JWT_SECRET = 'VERY_SECRET_KEY_DO_NOT_LEAK'
 
 mongoose.set('useCreateIndex', true)

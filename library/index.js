@@ -1,4 +1,4 @@
-const { ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server')
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server')
 const { v1: uuid } = require('uuid')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
@@ -8,8 +8,9 @@ const Author = require('./models/author')
 const User = require('./models/user')
 
 mongoose.set('useFindAndModify', false)
-const MONGODB_URI = 'mongodb+srv://heseduud:PSSWRD@cluster0-ifmbn.mongodb.net/gql?retryWrites=true&w=majority'
+const MONGODB_URI = 'mongodb+srv://heseduud:PWD@cluster0-ifmbn.mongodb.net/gql?retryWrites=true&w=majority'
 const JWT_SECRET = 'VERY_SECRET_KEY_DO_NOT_LEAK'
+const pubsub = new PubSub()
 
 mongoose.set('useCreateIndex', true)
 console.log('connecting to', MONGODB_URI)
@@ -76,6 +77,10 @@ const typeDefs = gql`
       password: String!
     ): Token
   }
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `
 
 const resolvers = {
@@ -137,6 +142,7 @@ const resolvers = {
           })
         }
         
+        pubsub.publish('BOOK_ADDED', { bookAdded: book })
         return book
       }
 
@@ -216,6 +222,11 @@ const resolvers = {
 
       return token
     }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    }
   }
 }
 
@@ -232,6 +243,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subs ready at ${subscriptionsUrl}`)
 })
